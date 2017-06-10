@@ -1,0 +1,415 @@
+
+
+<html>
+	<head>
+		<title>Rain Catcher</title>
+		<style>
+			body {
+				color: #000;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+				font-weight: bold;
+				background-color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+			#info {
+				color:#000;
+				position: absolute;
+				top: 0px; width: 100%;
+				padding: 5px;
+
+			}
+
+			a {
+				color: red;
+			}
+		#sysdata{
+			position = 'absolute';
+			zIndex:1000;
+			background:#ffffff;
+			color:red;
+			opacity:0.7;
+			left:0px; 
+			top:0px
+			
+		}
+		.inlx{
+			display:inline-block;
+		}
+		</style>
+	</head>
+	<body>
+	<div id="sysdata">
+	<div id="camerax" class="inlx">111</div>
+	<div id="butns" class="inlx">
+	<a href="javascript:router(1)">Sky<a>
+	</div>
+	
+		<script src="js/three.js"></script>
+		<script src="js/controls/OrbitControls.js"></script>
+		<script type="text/javascript" src="js/controls/TrackballControls.js"></script>
+		<script type="text/javascript" src="js/Detector.js"></script>
+		<script type="text/javascript" src="js/Stats.js"></script>
+		<script type="text/javascript" src="js/KeyboardState.js"></script>
+		
+<div id="ThreeJS" style="position: absolute; left:0px; top:20px"></div>
+<script>
+// global variables
+var container, scene, camera, renderer, controls, stats;
+var lighting, ambient, keyLight, fillLight, backLight;
+init();
+animate();
+
+function router(model){
+	ProjectionCamera();
+}
+
+function createOCamera (left, right, top, bottom, near, far, x,y,z,r, target){
+
+camera = new THREE.OrthographicCamera( left, right, top, bottom, near,far );
+	scene.add(camera);
+	camera.position.set(x,y,z);
+	camera.lookAt(scene.position);
+	camera.rotation.x = Math.PI ;
+	return camera;
+}
+// FUNCTIONS 		
+function init() 
+{
+	var SCR_WIDTH = window.innerWidth-20;
+	var SCR_HEIGHT = window.innerHeight-20;
+	var VIEW_ANGLE = 70;
+	var ASPECT = SCR_WIDTH / SCR_HEIGHT;
+	var NEAR = 0.1;
+	var FAR = 10000;
+
+// SCENE
+   scene = new THREE.Scene();
+	// Add x, y , z, axes
+	
+	
+	if ( Detector.webgl )
+		renderer = new THREE.WebGLRenderer( {antialias:true} );
+	else
+		renderer = new THREE.CanvasRenderer(); 
+	
+	renderer.setSize(SCR_WIDTH, SCR_HEIGHT);
+	container = document.getElementById( 'ThreeJS' );
+	container.appendChild( renderer.domElement );
+	
+	var axes = new THREE.AxisHelper(1000);
+	scene.add( axes );
+	
+	camera = createOCamera(window.innerWidth/- 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, - 500, 1000, -350,69,280,scene.position  );
+	// camera CONTROLS
+	controls = new THREE.OrbitControls( camera, renderer.domElement );
+	
+	
+    
+   // FLOOR layer
+	
+	var mapTexture=new THREE.TextureLoader().load( 'images/pettah/pettah_map.jpg' );
+	//mapTexture.wrapS = mapTexture.wrapT = THREE.RepeatWrapping; 
+	//mapTexture.repeat.set( 1, 1 );
+	var mapMaterial = new THREE.MeshBasicMaterial( { map: mapTexture, side: THREE.DoubleSide,transparent:true, opacity:0.8 } );
+	var mapGeometry = new THREE.PlaneGeometry(1024, 1024);
+	var map = new THREE.Mesh(mapGeometry, mapMaterial);
+	map.position.y = -300;
+	map.rotation.x = -Math.PI / 2;
+	scene.add(map);
+	
+	var map1 = new THREE.Mesh(mapGeometry, mapMaterial);
+	map1.position.y = 298;
+	map1.rotation.x = Math.PI / 2;
+	scene.add(map1);
+	
+
+	renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
+
+
+	material = new THREE.MeshBasicMaterial( { color: 0xFFFFFF, side: THREE.DoubleSide } );
+	geometry = new THREE.CircleGeometry( 512, 36 );
+	topscreen = new THREE.Mesh( geometry, material );
+	topscreen.position.y=300;
+	topscreen.rotation.x=-Math.PI / 2;
+	scene.add(topscreen);
+	
+	//dirlight1=lightup(0,250,0, topscreen)	;
+	
+	var skyBox = new Array();
+	var skyCylinder=new Array();
+	var skySphere = new Array();
+	var skyBoxMidLights = new Array();
+	var skyRects = new Array();
+	
+	m=0
+	c=randomColor();//0x00FF00;//
+	x=0;
+	y=0;
+	z=0; 
+	
+	matArray=['images/pettah/0.jpg','images/pettah/1.jpg','images/pettah/2.jpg', 'images/pettah/3.jpg', 'images/pettah/4.jpg', 'images/pettah/5.jpg', 'images/pettah/6.jpg', 'images/pettah/7.jpg', 'images/pettah/8.jpg'];
+
+	//skyRects[m]=createRectCylinder(m,256,456,x,y,z,4,matArray);
+	skyRects[m]=createOctaCylinder(m,256,456,x,y,z,8,matArray);
+	m=m+1
+			
+	
+    // LIGHT
+	
+	
+	
+	}
+
+function ProjectionCamera(){
+//zero width object
+var SCR_WIDTH = window.innerWidth-20;
+	var SCR_HEIGHT = window.innerHeight-20;
+	var VIEW_ANGLE = 70;
+	var ASPECT = SCR_WIDTH / SCR_HEIGHT
+	var NEAR = 0.1;
+	var FAR = 10000;
+	
+			var cameraTarget = new THREE.Mesh( new THREE.CubeGeometry(0,500,0));
+			camera = new THREE.PerspectiveCamera( 70, ASPECT, NEAR, FAR);
+			scene.add(camera);
+			
+			camera.position.set(0,-270,0);
+			camera.lookAt(cameraTarget.position);
+			controls = new THREE.OrbitControls( camera, renderer.domElement );
+			//PointLight( color, intensity, distance, decay )
+			var light = new THREE.PointLight(0xffffff,1,500,5000);
+			light.position.set(camera.position);
+			scene.add(light);
+			
+}
+
+function x(){
+			//-0.6831535283156515, _y: 0.2903107235625878, _z: 0.22889312750484683
+			camera.rotation.x = Math.PI ;
+			
+   
+	//var cubeGeom = new THREE.CubeGeometry(100, 100, 10, 1, 1, 1);
+	mirrorCubeCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
+	// mirrorCubeCamera.renderTarget.minFilter = THREE.LinearMipMapLinearFilter;
+	var mirrorCubeMaterial = new THREE.MeshBasicMaterial( { envMap: mirrorCubeCamera.renderTarget } );
+	mirrorCubeCamera.position.y= 700;
+	scene.add(mirrorCubeCamera);	
+	var helper = new THREE.CameraHelper( mirrorCubeCamera );
+	scene.add( helper );
+	
+	//var sphereGeom =  new THREE.SphereGeometry( 512, 8, 8 ); // radius, segmentsWidth, segmentsHeight
+	mirrorSphereCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
+	
+	// mirrorCubeCamera.renderTarget.minFilter = THREE.LinearMipMapLinearFilter;
+	scene.add( mirrorSphereCamera );
+	
+	var mirrorSphereMaterial = new THREE.MeshBasicMaterial( { envMap: mirrorSphereCamera.renderTarget } );
+	mirrorSphere = new THREE.Mesh( sphereGeom, mirrorSphereMaterial );
+	mirrorSphere.position.set(0,-250,0);
+	//mirrorSphereCamera.position = mirrorSphere.position;
+	scene.add(mirrorSphere);
+	
+}
+	
+function createOctaCylinder(m,w,h,x,y,z,nfaces,matArray){
+	
+	var skyRects=[];
+	c=2*Math.PI
+    a=(c/nfaces);
+	r=c-(a * 1) ; //45
+	skyRects[1]=createRectangle(m,w,h,x+96,y,z-96,r,matArray[1])
+	scene.add( skyRects[1] );
+	
+	r=c-(a * 2) ; //90
+	skyRects[2]=createRectangle(m,w,h,x+128,y,z,r,matArray[2]);
+	scene.add( skyRects[2] );
+	
+	
+	r=c-(a * 3) ; //135
+	skyRects[3]=createRectangle(m,w,h,x+96,y,z+96,r,matArray[3]);
+	scene.add( skyRects[3] );
+	
+	r=c-(a * 4) ; // 180
+	skyRects[4]=createRectangle(m,w,h,x,y,z+128,r,matArray[4])
+	scene.add( skyRects[4] );
+	
+	r=c-(a * 5) ; //225
+	skyRects[5]=createRectangle(m,w,h,x-96,y,z+96,r,matArray[5]);
+	scene.add( skyRects[5] );
+	
+	r=c-(a * 6) ; //270
+	skyRects[6]=createRectangle(m,w,h,x-128,y,z,r,matArray[6]);
+	scene.add( skyRects[6] );
+
+
+	r=c-(a * 7) ; //315
+	skyRects[7]=createRectangle(m,w,h,x-96,y,z-96,r,matArray[7]);
+	scene.add( skyRects[7] );
+	
+	r=0;
+	y1=y+(h/2);
+	skyRects[8]=createRectangle(m,w,h,0,0,0,0,matArray[8]);
+	scene.add( skyRects[8] );
+	skyRects[8].rotation.x = - (Math.PI/2);
+	skyRects[8].position.y = y1;
+	
+	r=0;
+	y1=y+(h/2);
+	skyRects[9]=createRectangle(m,w,h,0,0,0,0,matArray[8]);
+	scene.add( skyRects[9] );
+	skyRects[9].rotation.x = - (Math.PI/2);
+	skyRects[9].position.y = y1;
+	skyRects[8].rotation.z = (Math.PI/2);
+	
+	return skyRects;
+	
+}
+
+function createRectCylinder(m,w,h,x,y,z,nfaces,matArray){
+	console.log(matArray);
+	skyRects=[];
+    
+	r=(2*Math.PI/nfaces) *0;
+	skyRects[0]=createRectangle(m,w,h,x,y,z-128,r,matArray[0]);
+	scene.add( skyRects[0] );
+	
+	r=(2*Math.PI/nfaces) *1;
+	skyRects[1]=createRectangle(m,w,h,x+128,y,z,r,matArray[1])
+	scene.add( skyRects[1] );
+	
+	r=(2*Math.PI/nfaces) *2;
+	skyRects[2]=createRectangle(m,w,h,x,y,z+128,r,matArray[2]);
+	scene.add( skyRects[2] );
+	
+	r=(2*Math.PI/nfaces) *3;
+	skyRects[3]=createRectangle(m,w,h,x-128,y,z,r,matArray[3]);
+	scene.add( skyRects[3] );
+
+	r=0;
+	y1=y+(h/2);
+	skyRects[4]=createRectangle(m,w,h,0,0,0,0,matArray[2]);
+	scene.add( skyRects[4] );
+	skyRects[4].rotation.x = - (Math.PI/2);
+	skyRects[4].position.y = y1;
+	
+	return skyRects;
+	
+}
+ 
+function lightup(x,y,z,topscreen){
+	var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+	scene.add( directionalLight);
+	directionalLight.position.set(x,y,z);
+	return directionalLight;
+}
+function createRectangle(m,w,h,x1,y1,z1,r,imgx) {
+	console.log(w + " " + x1 + " " + y1 + " " +z1 + " " + r);
+	var rectTexture=new THREE.TextureLoader().load( imgx );
+	//THREE.BackSide,
+	var rectMaterial= new THREE.MeshBasicMaterial({ map: rectTexture, side: THREE.DoubleSide,transparent:true, opacity:0.5 });
+	var rectGeometry = new THREE.PlaneGeometry(w,h);
+	var rect = new THREE.Mesh(rectGeometry, rectMaterial);
+	rect.position.x = x1;
+	rect.position.y = y1;
+	rect.position.z = z1;
+	rect.rotation.y = r;
+	return rect;
+}
+
+function createCylinder(m, c, rt,rb,h,rs,hs,x,y,z, materialArray){	
+	var geometry = new THREE.CylinderGeometry( rt, rb, h,rs, hs );
+	var material = new THREE.MeshBasicMaterial( {color: c, wireframe:true} );
+	var cylinder = new THREE.Mesh( geometry, material );
+	//var cylinder = new THREE.Mesh( geometry, materialArray);
+	cylinder.position.x=x;
+    cylinder.position.y=y;
+    cylinder.position.z=z;
+	return cylinder;
+}
+
+
+function createSphere(m,c, r,ws,hs,x,y,z){		
+	var geometry = new THREE.SphereGeometry( r, ws, hs );
+	var material = new THREE.MeshBasicMaterial( {color: c} );
+	var sphere = new THREE.Mesh( geometry, material );
+	sphere.position.x=x;
+    sphere.position.y=y;
+    sphere.position.z=z;
+	return sphere;
+}
+
+
+function createMidPointLight(m,x,y,z,c,i,di,dc){
+	var light = new THREE.PointLight(c,x/2,y/2,z/2);
+	light.position.set( x, y, z );
+	return light;
+}
+
+
+function createSkyCube(m,l,w,h,c,dx,dy,dz,x,y,z,materialArray){
+    //var skyMaterial = new THREE.MeshFaceMaterial( materialArray );
+	var geometryx = new THREE.BoxGeometry( l,w,h, dx,dy,dz );
+	var cube = new THREE.Mesh( geometryx, materialArray );
+	cube.position.set( x, y, z );
+	return cube;
+}
+
+
+
+function createCube(m,l,w,h,c,dx,dy,dz,x,y,z){
+	//var meshMaterialx = new THREE.MeshBasicMaterial({ color:c, transparent:true, opacity:0.7, wireframe: true });
+	var meshMaterialx = new THREE.MeshBasicMaterial({ color:c,  wireframe: true });
+	var geometryx = new THREE.BoxGeometry( l,w,h, dx,dy,dz );
+	var cube = new THREE.Mesh( geometryx, meshMaterialx );
+	cube.position.set( x, y, z );
+	return cube;
+}
+
+function animate() 
+{
+    requestAnimationFrame( animate );
+	render();
+	//timex("Animate");
+	update();
+}
+
+function timex(s){
+ var d = new Date();
+ var t= d.getTime();
+ console.log(s + " " + t);
+}
+
+function update()
+{
+	document.getElementById("camerax").innerHTML= Math.floor(scene.children[1].position.x) + " " + Math.floor(scene.children[1].position.y) + " " + 	Math.floor(scene.children[1].position.z);
+;
+	
+	
+	//controls.update();
+	//stats.update();
+}
+
+
+
+
+function randomColor(){
+	colors=[0x0000FF,0x00FF00,0xFF0000,0x00FFFF,0x00FF00,0xFFFF00, 0xF0F000, 0xFF0F0f, 0xFFFFF0, 0xFFFFF, 0xEFFF00 ];
+	n=Math.floor(Math.random() * colors.length);
+	return colors[n]
+}
+	
+function render() 
+{
+	renderer.render( scene, camera );
+}
+
+
+</script>
+
+
+</body>
+</html>
