@@ -15,5 +15,5 @@
 		"duration": 1800000,
 		"activeDuration": 300000
 	},
-	"listenPort": 8088,
+	"listenPort": 8088
 }

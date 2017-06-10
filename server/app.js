@@ -38,7 +38,6 @@ function persistantConnection(){
 persistantConnection();
 
 var app = express();
-app.use(session(config.session));
 
 //	-----------------------------------------------------------------------------
 //	Deliver the base template of SPA
@@ -47,10 +46,38 @@ app.get('/', function (req, res){
 	res.send(loadTemplatePart('base.html', req));
 });
 
+
+
+app.listen(config.listenPort, function (){
+	console.log('Info.lk sentry is listening on port '+config.listenPort);
+});
+
 // --------------------------------------------------------------------------
 
+//	Handler for multipart POST request/response body
+function handlePost(req, callback){
+	var body = '';
+	req.on('data', function (data){
+		body += data;
+		if (body.length > 1e6)
+			req.connection.destroy();
+	});
+	req.on('end', function (data){
+		var post = body;
+		try{
+			post = JSON.parse(post);
+		}
+		catch(e){
+			try{
+				post = qs.parse(post);
+			}
+			catch(e){}
+		}
+		callback(post);
+	});
+}
+
 function loadTemplatePart(template, req){
-	var user = authenticate(req);
 	try{
 		return fs.readFileSync('./templates/'+template, 'utf8');
 	}
