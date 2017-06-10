@@ -1,12 +1,13 @@
 
 var Gpio = require('pigpio').Gpio;
-var servo = new Gpio(4, {mode: Gpio.OUTPUT});
+var Servo = new Gpio(4, {mode: Gpio.OUTPUT});
+var RaspiCam = require("raspicam");
 
 /*var pwidth = 500;
 var inc = 200;
 
 setInterval(function(){
-	servo.servoWrite(pwidth);
+	Servo.servoWrite(pwidth);
 	pwidth += inc;
 	console.log(pwidth);
 	if (pwidth >= 2500)
@@ -15,21 +16,26 @@ setInterval(function(){
 		inc = 200;
 }, 1000);*/
 
-var start = 500;
-var end = 2500;
-var inc = 200;
+var start = 800;
+var inc = 400;
 var pos = 0;
 
 var syncData = function(){
-	servo.servoWrite(start + inc*pos);
+	console.log(start+' + ('+inc+' * '+pos+')');
+	Servo.servoWrite(start + inc*pos);
 	pos += 1;
 	//
-	if (pos == 10)
+	if (pos == 4)
 		pos = 0;
 	//
 	setTimeout(function(){
 		// Take picture and add to buffer
 		//
+		// Move to next position
 		setTimeout(syncData, 1000);
-	}, pos == 0 ? 1500 : 500);
+	}, 500);
+	//pos == 0 ? 1500 : 500
 }
+syncData();
+
+

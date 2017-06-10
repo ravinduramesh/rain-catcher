@@ -46,10 +46,21 @@ app.get('/', function (req, res){
 	res.send(loadTemplatePart('base.html', req));
 });
 
+//	-----------------------------------------------------------------------------
+//	API Endpoint to receive data
+//	-----------------------------------------------------------------------------
+app.get('/api/put', function (req, res){
+	//	Needs to authenticate the RPi module
+	//
+	handlePost(req, function(data){
+		console.log(data);
+	});
+});
+
 
 
 app.listen(config.listenPort, function (){
-	console.log('Info.lk sentry is listening on port '+config.listenPort);
+	console.log('RainCatcher server is listening on port '+config.listenPort);
 });
 
 // --------------------------------------------------------------------------

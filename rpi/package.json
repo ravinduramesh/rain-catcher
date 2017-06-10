@@ -1,0 +1,30 @@
+{
+  "name": "rain-catcher-client",
+  "version": "1.0.0",
+  "description": "This part of the code is to be deployed to the Raspberry Pi module with camera with rotation jig",
+  "main": "app.js",
+  "dependencies": {
+    "pigpio": "^0.6.0",
+    "raspicam": "^0.2.13"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vishva8kumara/rain-catcher.git"
+  },
+  "keywords": [
+    "weather",
+    "clouds",
+    "data-collection",
+    "infra-red"
+  ],
+  "author": "vishva8kumara",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vishva8kumara/rain-catcher/issues"
+  },
+  "homepage": "https://github.com/vishva8kumara/rain-catcher#readme"
+}
