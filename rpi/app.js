@@ -1,7 +1,9 @@
 
 var Gpio = require('pigpio').Gpio;
 var Servo = new Gpio(4, {mode: Gpio.OUTPUT});
+
 var RaspiCam = require("raspicam");
+var Camera = new RaspiCam({mode: 'photo', output: image, encoding: 'png'});
 
 /*var pwidth = 500;
 var inc = 200;
@@ -37,5 +39,29 @@ var syncData = function(){
 	//pos == 0 ? 1500 : 500
 }
 syncData();
+
+Camera.start();
+Camera.on("read", function(err, timestamp, filename){
+	console.log(filename);
+	Camera.stop();
+});
+
+
+/*/	Clean-up before program exits
+process.stdin.resume();
+function exitHandler(options, err){
+	if (options.cleanup){
+		console.log('clean');
+	}
+	//
+	if (err)
+		console.log(err.stack);
+	//
+	if (options.exit){
+		process.exit();
+	}
+}
+process.on('exit', exitHandler.bind(null,{cleanup:true}));
+//*/
 
 
