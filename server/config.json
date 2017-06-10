@@ -1,0 +1,19 @@
+{
+	"database": {
+		"host": "localhost",
+		"database": "clouds",
+		"user": "root",
+		"password": ""
+	},
+	"databaseConnection": {
+		"retryMinTimeout": 2000,
+		"retryMaxTimeout": 60000
+	},
+	"session": {
+		"cookieName": "session",
+		"secret": "NaCl-is-5a1t",
+		"duration": 1800000,
+		"activeDuration": 300000
+	},
+	"listenPort": 8088,
+}

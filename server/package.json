@@ -1,0 +1,29 @@
+{
+  "name": "rain-catcher-server",
+  "version": "1.0.0",
+  "description": "This part of the code is to be deployed on a web server to deliver information and receive data via an API.",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.15.3",
+    "mysql": "^2.13.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vishva8kumara/rain-catcher.git"
+  },
+  "keywords": [
+    "api",
+    "weather",
+    "data-collection"
+  ],
+  "author": "vishva8kumara",
+  "license": "SEE LICENSE IN https://github.com/vishva8kumara/rain-catcher/blob/master/LICENSE",
+  "bugs": {
+    "url": "https://github.com/vishva8kumara/rain-catcher/issues"
+  },
+  "homepage": "https://github.com/vishva8kumara/rain-catcher#readme"
+}
