@@ -69,7 +69,43 @@ var take_photo = function(filename, callback){
 }
 
 var upload_data = function(data){
-	console.log(data);
+	var apiCall = http.request(
+		{port: 80, method: 'POST', host: 'api.sky.info.lk', path: '/api/put', headers: {'Content-Type': 'application/json'}},
+		function(response){
+			response.setEncoding('utf8');
+			handle_post(response, function(api_response){
+				console.log(api_response);
+			});
+		})
+	.on('error', function(err){
+		console.log(err);
+	});
+	//	Write data to request stream
+	apiCall.write(JSON.stringify(data));
+	apiCall.end();
+}
+
+//	Handler for multipart POST request/response body
+function handle_post(req, callback){
+	var body = '';
+	req.on('data', function (data){
+		body += data;
+		if (body.length > 1e6)
+			req.connection.destroy();
+	});
+	req.on('end', function (data){
+		var post = body;
+		try{
+			post = JSON.parse(post);
+		}
+		catch(e){
+			try{
+				post = qs.parse(post);
+			}
+			catch(e){}
+		}
+		callback(post);
+	});
 }
 
 

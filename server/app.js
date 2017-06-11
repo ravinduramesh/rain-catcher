@@ -49,7 +49,7 @@ app.get('/', function (req, res){
 //	-----------------------------------------------------------------------------
 //	API Endpoint to receive data
 //	-----------------------------------------------------------------------------
-app.get('/api/put', function (req, res){
+app.post('/api/put', function (req, res){
 	//	Needs to authenticate the RPi module
 	//
 	handlePost(req, function(data){
