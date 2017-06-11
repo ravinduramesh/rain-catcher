@@ -1,0 +1,263 @@
+<html>
+	<head>
+		<title>Cloud Catcher</title>
+		<style>
+			body {
+				color: #000;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+				font-weight: bold;
+				background-color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+
+			#info {
+				color:#000;
+				position: absolute;
+				top: 0px; width: 100%;
+				padding: 5px;
+
+			}
+
+			a {
+				color: red;
+			}
+		</style>
+	</head>
+	<body>
+	<div>xss</div>
+		<script src="js/three.js"></script>
+		<script src="js/controls/OrbitControls.js"></script>
+		<script type="text/javascript" src="js/controls/TrackballControls.js"></script>
+		<script type="text/javascript" src="js/Detector.js"></script>
+		
+<div id="ThreeJS" style="position: absolute; left:0px; top:0px"></div>
+<script>
+/*
+	Three.js "tutorials by example"
+	Author: Lee Stemkoski
+	Date: July 2013 (three.js v59dev)
+*/
+
+// MAIN
+
+// standard global variables
+var container, scene, camera, renderer, controls, stats;
+//var keyboard = new THREEx.KeyboardState();
+//var clock = new THREE.Clock();
+// custom global variables
+var cube1;
+
+init();
+animate();
+
+// FUNCTIONS 		
+function init() 
+{
+	var SCREEN_WIDTH = window.innerWidth-20;
+	var SCREEN_HEIGHT = window.innerHeight-20;
+	var VIEW_ANGLE = 70;
+	var ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT
+	var NEAR = 0.1;
+	var FAR = 10000;
+	
+	
+			
+			
+			//renderer.setClearColorHex( 0xeeeeee, 1.0 );
+			// SCENE
+			scene = new THREE.Scene();
+			// Add axes
+			var axes = new THREE.AxisHelper(1000);
+			scene.add( axes );
+
+			//var ambientLight = new THREE.AmbientLight( 0xFF0000, 1 );
+			//scene.add( ambientLight );
+
+			//camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+			camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, - 500, 1000 );
+			scene.add(camera);
+			camera.position.set(-150,250,400);
+			//-0.6831535283156515, _y: 0.2903107235625878, _z: 0.22889312750484683
+			//camera.rotation.x = Math.PI ;
+			camera.lookAt(scene.position);	
+			
+			// FLOOR
+	var floorTexture = new THREE.ImageUtils.loadTexture( 'images/sky/map.jpg' );
+	floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; 
+	floorTexture.repeat.set( 1, 1 );
+	var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
+	var floorGeometry = new THREE.PlaneGeometry(1024, 1024);
+	var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+	floor.position.y = -200;
+	floor.rotation.x = -Math.PI / 2;
+	scene.add(floor);
+	
+	/*
+			//Cube1
+			meshMaterial1 = new THREE.MeshBasicMaterial({ color: 0x0000FF, wireframe: true });
+		    var geometry1 = new THREE.BoxGeometry( 256,256,256 );
+			var cube1 = new THREE.Mesh( geometry1, meshMaterial1 );
+			cube1.position.set( 0, 0, 0 );	
+			scene.add( cube1 );
+
+    */
+			
+			
+					
+	// RENDERER
+	
+	if ( Detector.webgl )
+		renderer = new THREE.WebGLRenderer( {antialias:true} );
+	else
+		renderer = new THREE.CanvasRenderer(); 
+	
+	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	container = document.getElementById( 'ThreeJS' );
+	container.appendChild( renderer.domElement );
+	// EVENTS
+	//THREEx.WindowResize(renderer, camera);
+	//THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+	// CONTROLS
+	controls = new THREE.OrbitControls( camera, renderer.domElement );
+	// STATS
+	//stats = new Stats();
+	//stats.domElement.style.position = 'absolute';
+	//stats.domElement.style.bottom = '0px';
+	//stats.domElement.style.zIndex = 100;
+	//container.appendChild( stats.domElement );
+	// LIGHT
+	//var light = new THREE.PointLight(0xffffff);
+	//light.position.set(0,250,0);
+	//scene.add(light);
+	
+	////////////
+	// CUSTOM //
+	////////////
+	
+	
+	
+	var imagePrefix = "images/sky/";
+	var directions  = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"];
+	var imageSuffix = ".jpg";
+	/*
+	var skyGeometry = new THREE.CubeGeometry( 256, 256, 256, 8,8,8 );	
+	*/
+	
+	var materialArray = [];
+	for (var i = 0; i < 6; i++){
+		//if (i != 24){
+		materialArray.push( new THREE.MeshBasicMaterial({
+			map: THREE.ImageUtils.loadTexture( imagePrefix + directions[i] + imageSuffix ),
+			side: THREE.BackSide
+		}));
+		//}
+		materialArray[i].opacity=0.2;
+	}
+	materialArray[3].visible=false;
+	/*
+	
+	var skyMaterial = new THREE.MeshFaceMaterial( materialArray );
+	var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
+	scene.add( skyBox );
+	
+	var skyBox1 = new THREE.Mesh( skyGeometry, skyMaterial );
+	skyBox1.position.set( 200, 50, -60 );
+	scene.add( skyBox1 );
+	
+	*/
+	
+	var skyBox = new Array();
+	m=0
+	for (i = 0; i < 4; i++) { 
+		//skyBox[i] = new Array(4);
+		for (j = 0; j < 4; j++) { 
+			c=randomColor();//0x00FF00;//
+			x=(256 *(i-2)) + 140
+			y=Math.floor(Math.random() * 200);
+			z=(256 *(j-2))+140
+			
+			s=m + "  " + x + "  " + y + "  " +z;
+			console.log(s)
+			//skyBox[m]=createSkyCube(m,256,256,256,c,4,4,4,x,y,z,materialArray);
+			
+			skyBox[m]=createCube(m,256,455,256,c,4,4,4,x,y,z);
+			scene.add( skyBox[m] );
+			m=m+1
+		}
+	}
+	/*
+	skyBox3=createCube(scene,256,256,256,c,4,4,4,160,96,200);
+	scene.add( skyBox3 );
+	
+	skyBox4=createCube(scene,256,256,256,0x00FF00,4,4,4,-240,96,40);
+	scene.add( skyBox4 );
+	
+	skyBox5=createCube(scene,256,256,256,0xFF0000,4,4,4,-440,240,192);
+	scene.add( skyBox5 );
+
+	skyBox5=createCube(scene,256,256,256,0x00FFFF,4,4,4,40,96,-260);
+	scene.add( skyBox5 );
+	
+	skyBox6=createCube(scene,256,256,256,0x00FF00,4,4,4,-120,160,440);
+	scene.add( skyBox6 );
+	
+	skyBox7=createCube(scene,256,256,256,0xFFFF00,4,4,4,40,240,640);
+	scene.add( skyBox7 );
+	*/
+}
+
+function createSkyCube(m,l,w,h,c,dx,dy,dz,x,y,z,materialArray){
+    var skyMaterial = new THREE.MeshFaceMaterial( materialArray );
+	var geometryx = new THREE.BoxGeometry( l,w,h, dx,dy,dz );
+	var cube = new THREE.Mesh( geometryx, skyMaterial );
+	cube.position.set( x, y, z );
+	return cube;
+}
+
+function createCube(m,l,w,h,c,dx,dy,dz,x,y,z){
+	//var meshMaterialx = new THREE.MeshBasicMaterial({ color:c, transparent:true, opacity:0.7, wireframe: true });
+	var meshMaterialx = new THREE.MeshBasicMaterial({ color:c,  wireframe: true });
+	var geometryx = new THREE.BoxGeometry( l,w,h, dx,dy,dz );
+	var cube = new THREE.Mesh( geometryx, meshMaterialx );
+	cube.position.set( x, y, z );
+	return cube;
+}
+
+function animate() 
+{
+    requestAnimationFrame( animate );
+	render();		
+	//update();
+}
+
+function update()
+{
+	if ( keyboard.pressed("z") ) 
+	{ 
+		// do something
+	}
+	
+	controls.update();
+	stats.update();
+}
+
+function randomColor(){
+	colors=[0x0000FF,0x00FF00,0xFF0000,0x00FFFF,0x00FF00,0xFFFF00, 0xF0F000, 0xFF0F0f, 0xFFFFF0, 0xFFFFF, 0xEFFF00 ];
+	n=Math.floor(Math.random() * colors.length);
+	return colors[n]
+}
+	
+function render() 
+{
+	renderer.render( scene, camera );
+}
+
+
+</script>
+
+
+</body>
+</html>
