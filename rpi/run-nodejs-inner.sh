@@ -1,4 +1,4 @@
 
 node app.js
 
-sh run-nodejs.sh
+#sh run-nodejs.sh
