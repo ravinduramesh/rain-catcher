@@ -82,7 +82,7 @@ var upload_data = function(data){
 		console.log(err);
 	});
 	//	Write data to request stream
-	apiCall.write(JSON.stringify(data));
+	apiCall.write(data);
 	apiCall.end();
 }
 

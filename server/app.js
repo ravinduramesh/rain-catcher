@@ -35,7 +35,7 @@ function persistantConnection(){
 				persistantConnection();
 		});
 }
-persistantConnection();
+//persistantConnection();
 
 var app = express();
 
