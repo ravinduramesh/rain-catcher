@@ -9,14 +9,20 @@ var start = 800;
 var inc = 400;
 var pos = 3;
 
-var TimeStamp = parseInt((new Date()).getTime() / 1000);
+var TimeStamp;// = parseInt((new Date()).getTime() / 1000);
+var dataPacket = false;// = {};
 
-var syncData = function(){
+var step = function(){
 	pos += 1;
 	//
 	if (pos == 4){
 		pos = 0;
 		TimeStamp = parseInt((new Date()).getTime() / 1000);
+		if (dataPacket != false)
+			upload_data(JSON.stringify(dataPacket));
+		dataPacket = JSON.parse(fs.readFileSync(__dirname+'/data.json')) || {};
+		dataPacket.timestamp = TimeStamp;
+		dataPacket.images = {};
 	}
 	Servo.servoWrite(start + inc*pos);
 	//console.log(start+' + ('+inc+' * '+pos+')');
@@ -25,18 +31,19 @@ var syncData = function(){
 	setTimeout(function(){
 		var FileName = TimeStamp+'-'+pos+'.png';
 		// Take picture and add to buffer
-		new takePhoto(FileName,
+		new take_photo(FileName,
 			function(image){
-				console.log(image);
+				//console.log(image);
+				dataPacket.images[pos] = image;
 				// Move to next position
-				setTimeout(function(){syncData();}, 1000);
+				setTimeout(function(){step();}, 1000);
 			});
-	}, 800);
+	}, 360);
 }
-syncData();
+step();
 
 //	Takes a photo from webcam and returns BASE64
-var takePhoto = function(filename, callback){
+var take_photo = function(filename, callback){
 	var Camera = new RaspiCam({mode: 'photo', output: filename, encoding: 'png', timeout: 200, 'nopreview': true});
 	var calledback = false;
 	Camera.start();
@@ -48,11 +55,21 @@ var takePhoto = function(filename, callback){
 		calledback = true;
 		//
 		setTimeout(function(){
-			var bitmap = fs.readFileSync(__dirname+'/'+filename.substr(0, filename.length-1));
-			callback(new Buffer(bitmap).toString('base64'));
-			fs.unlink(__dirname+'/'+filename.substr(0, filename.length-1));
+			try{
+				var bitmap = fs.readFileSync(__dirname+'/'+filename.substr(0, filename.length-1));
+				bitmap = new Buffer(bitmap).toString('base64');
+				fs.unlink(__dirname+'/'+filename.substr(0, filename.length-1));
+			}catch(e){
+				bitmap = false;
+				fs.unlink(__dirname+'/'+filename);
+			}
+			callback(bitmap);
 			Camera.stop();}, 1600);
 	});
+}
+
+var upload_data = function(data){
+	console.log(data);
 }
 
 
