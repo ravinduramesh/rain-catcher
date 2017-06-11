@@ -1,5 +1,6 @@
 
 var fs = require('fs');
+var http = require('http');
 var Gpio = require('pigpio').Gpio;
 var Servo = new Gpio(4, {mode: Gpio.OUTPUT});
 
