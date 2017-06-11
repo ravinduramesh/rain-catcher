@@ -44,12 +44,14 @@
 	<div id="sysdata">
 	<div id="camerax" class="inlx">111</div>
 	<div id="butns" class="inlx">
-	<a href="javascript:router(1)">Sky<a>
-	- <a href="javascript:router(2)">Map<a>
-	- <a href="javascript:router(3)">Model<a>
+	<a href="javascript:router(1)">Sky</a>
+	- <a href="javascript:router(2)">Map</a>
+	- <a href="javascript:router(3)">Model</a>
+	- <a href="javascript:router(4)">Grid<a>
+	<!--
 	- <a href="javascript:router(4)">V1<a>
-	- <a href="javascript:router(4)">V2<a>
-	
+	- <a href="javascript:router(5)">M<a>-->
+
 	
 	</div>
 	
@@ -85,14 +87,15 @@ function router(model){
         addTopMap()
 	}
 	else if (mode=3){
-		wireframeOne()
-	}
-	else if (mode=4){
 		skyview()
 	}
+	else if (mode=4){
+		wireframeOne()
+	}
 	else if (mode=5){
-		skyview2()
-    } else {
+		modelview()
+    
+	} else {
         greeting = "Good evening";
     }
 }
@@ -106,6 +109,7 @@ function addTopMap(){
 	map1.rotation.x = Math.PI / 2;
 	scene.add(map1);
 }
+
 function createOCamera (left, right, top, bottom, near, far, x,y,z,r, target){
 	
 	camera = new THREE.OrthographicCamera( left, right, top, bottom, near,far );
@@ -144,11 +148,10 @@ function init()
 	
     // LIGHT
 	skyview()
+	ProjectionCamera();
 	}
 	
 function skyview(){
-
-
 	
    // FLOOR layer
 	
@@ -156,25 +159,32 @@ function skyview(){
 	var mapMaterial = new THREE.MeshBasicMaterial( { map: mapTexture, side: THREE.DoubleSide,transparent:true, opacity:1 } );
 	var mapGeometry = new THREE.PlaneGeometry(1024, 1024);
 	var map = new THREE.Mesh(mapGeometry, mapMaterial);
-	map.position.y = -300;
+	map.position.y = -420;
 	map.rotation.x = -Math.PI / 2;
 	scene.add(map);
 	
 	//ceilling
 	material = new THREE.MeshBasicMaterial( { color: 0xFFFFFF, side: THREE.DoubleSide } );
-	geometry = new THREE.CircleGeometry( 512, 36 );
+	geometry = new THREE.CircleGeometry( 792, 36 );
 	topscreen = new THREE.Mesh( geometry, material );
 	topscreen.position.y=300;
 	topscreen.rotation.x=-Math.PI / 2;
-	///scene.add(topscreen);
-	///dirlight1=lightup(0,250,0, topscreen)	;
+	scene.add(topscreen);
+	dirlight1=lightup(0,250,0, topscreen)	;
+	
+	modelview()
+	
+	camera = createOCamera(window.innerWidth/- 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, - 500, 1000, -350,69,280,scene.position  );
+	// camera CONTROLS
+	controls = new THREE.OrbitControls( camera, renderer.domElement );
 	
 	
-	
-	var skyBox = new Array();
-	var skySphere = new Array();
-	var skyBoxMidLights = new Array();
-	var skyRects = new Array();
+		//skyRects[m]=createOctaCylinder(m,256,456,x+480,y,z+64,8,matArray);
+}
+
+function modelview(){
+
+var skyRects = new Array();
 	
 	m=0
 	c=randomColor();//0x00FF00;//
@@ -186,14 +196,10 @@ function skyview(){
 	//skyRects[m]=createRectCylinder(m,256,456,x,y,z,4,matArray);
 	skyRects[m]=createOctaCylinder(m,256,456,x,y,z,8,matArray);
 	m=m+1
+	
 }
 
-
-
 function skyview2(){
-
-
-	
 	var skyBox = new Array();
 	var skySphere = new Array();
 	var skyBoxMidLights = new Array();
@@ -263,7 +269,7 @@ var SCR_WIDTH = window.innerWidth-20;
 			camera = new THREE.PerspectiveCamera( 70, ASPECT, NEAR, FAR);
 			scene.add(camera);
 			
-			camera.position.set(0,-270,0);
+			camera.position.set(0,-420,0);
 			camera.lookAt(cameraTarget.position);
 			controls = new THREE.OrbitControls( camera, renderer.domElement );
 			//PointLight( color, intensity, distance, decay )
@@ -306,8 +312,70 @@ function x(){
 	scene.add(mirrorSphere);
 	
 }
-	
+
+
 function createOctaCylinder(m,w,h,x,y,z,nfaces,matArray){
+	
+	var skyRects=[];
+	
+	c=2*Math.PI
+    a=(c/nfaces);
+	r=c-(a * 0) ; //0
+	skyRects[0]=createRectangle(m,w,h,x,y,z-256,r,matArray[0]);
+	scene.add( skyRects[0] );
+	//skyRects[0].rotation.x = Math.PI /4;
+	
+	
+	r=c-(a * 1) ; //45
+	skyRects[1]=createRectangle(m,w,h,x+192,y,z-192,r,matArray[1])
+	scene.add( skyRects[1] );
+	
+	r=c-(a * 2) ; //90
+	skyRects[2]=createRectangle(m,w,h,x+256,y,z,r,matArray[2]);
+	scene.add( skyRects[2] );
+	
+	
+	r=c-(a * 3) ; //135
+	skyRects[3]=createRectangle(m,w,h,x+192,y,z+192,r,matArray[3]);
+	scene.add( skyRects[3] );
+	
+	r=c-(a * 4) ; // 180
+	skyRects[4]=createRectangle(m,w,h,x,y,z+256,r,matArray[4])
+	scene.add( skyRects[4] );
+	
+	r=c-(a * 5) ; //225
+	skyRects[5]=createRectangle(m,w,h,x-192,y,z+192,r,matArray[5]);
+	scene.add( skyRects[5] );
+	
+	r=c-(a * 6) ; //270
+	skyRects[6]=createRectangle(m,w,h,x-256,y,z,r,matArray[6]);
+	scene.add( skyRects[6] );
+
+
+	r=c-(a * 7) ; //315
+	skyRects[7]=createRectangle(m,w,h,x-192,y,z-192,r,matArray[7]);
+	scene.add( skyRects[7] );
+	
+	r=0;
+	y1=y+(h/2)+32;
+	skyRects[8]=createRectangle(m,w*2.2,h*2.2,0,0,0,0,matArray[8]);
+	scene.add( skyRects[8] );
+	skyRects[8].rotation.x = - (Math.PI/2);
+	skyRects[8].position.y = y1;
+	/*
+	r=0;
+	y1=y+(h/2);
+	skyRects[9]=createRectangle(m,w,h,0,0,0,0,matArray[8]);
+	scene.add( skyRects[9] );
+	skyRects[9].rotation.x = - (Math.PI/2);
+	skyRects[9].position.y = y1;
+	skyRects[8].rotation.z = (Math.PI/2);
+	*/
+	return skyRects;
+	
+}
+
+function _createOctaCylinder(m,w,h,x,y,z,nfaces,matArray){
 	
 	var skyRects=[];
 	

@@ -46,10 +46,6 @@
 	<div id="butns" class="inlx">
 	<a href="javascript:router(1)">Sky<a>
 	- <a href="javascript:router(2)">Map<a>
-	- <a href="javascript:router(3)">Model<a>
-	- <a href="javascript:router(4)">V1<a>
-	- <a href="javascript:router(4)">V2<a>
-	
 	
 	</div>
 	
@@ -83,18 +79,10 @@ function router(model){
         ProjectionCamera();
     } else if (model==2) {
         addTopMap()
-	}
-	else if (mode=3){
-		wireframeOne()
-	}
-	else if (mode=4){
-		skyview()
-	}
-	else if (mode=5){
-		skyview2()
     } else {
         greeting = "Good evening";
     }
+	
 }
 
 function addTopMap(){
@@ -127,28 +115,13 @@ function init()
 	else
 		renderer = new THREE.CanvasRenderer(); 
 	
-	renderer.setSize(SCR_WIDTH, SCR_HEIGHT);		
-	renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // changes default THREE.PCFShadowMa
-
-
+	renderer.setSize(SCR_WIDTH, SCR_HEIGHT);
 	container = document.getElementById( 'ThreeJS' );
-	container.appendChild( renderer.domElement );		
-	camera = createOCamera(window.innerWidth/- 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, - 500, 1000, -350,69,280,scene.position  );
-	// camera CONTROLS
-	controls = new THREE.OrbitControls( camera, renderer.domElement );
+	container.appendChild( renderer.domElement );
 	
 	// Add x, y , z, axes
 	var axes = new THREE.AxisHelper(1000);
 	scene.add( axes );
-	
-    // LIGHT
-	skyview()
-	}
-	
-function skyview(){
-
-
 	
    // FLOOR layer
 	
@@ -160,18 +133,24 @@ function skyview(){
 	map.rotation.x = -Math.PI / 2;
 	scene.add(map);
 	
-	//ceilling
+	
 	material = new THREE.MeshBasicMaterial( { color: 0xFFFFFF, side: THREE.DoubleSide } );
 	geometry = new THREE.CircleGeometry( 512, 36 );
 	topscreen = new THREE.Mesh( geometry, material );
 	topscreen.position.y=300;
 	topscreen.rotation.x=-Math.PI / 2;
-	///scene.add(topscreen);
-	///dirlight1=lightup(0,250,0, topscreen)	;
+	scene.add(topscreen);
+	
+
+	dirlight1=lightup(0,250,0, topscreen)	;
+		
+	renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMa
 	
 	
 	
 	var skyBox = new Array();
+	var skyCylinder=new Array();
 	var skySphere = new Array();
 	var skyBoxMidLights = new Array();
 	var skyRects = new Array();
@@ -183,72 +162,18 @@ function skyview(){
 	z=0; 
 	
 	matArray=['images/pettah/0.jpg','images/pettah/1.jpg','images/pettah/2.jpg', 'images/pettah/3.jpg', 'images/pettah/4.jpg', 'images/pettah/5.jpg', 'images/pettah/6.jpg', 'images/pettah/7.jpg', 'images/pettah/8.jpg'];
+
 	//skyRects[m]=createRectCylinder(m,256,456,x,y,z,4,matArray);
 	skyRects[m]=createOctaCylinder(m,256,456,x,y,z,8,matArray);
 	m=m+1
-}
-
-
-
-function skyview2(){
-
-
+			
+	camera = createOCamera(window.innerWidth/- 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, - 500, 1000, -350,69,280,scene.position  );
+	// camera CONTROLS
+	controls = new THREE.OrbitControls( camera, renderer.domElement );
 	
-	var skyBox = new Array();
-	var skySphere = new Array();
-	var skyBoxMidLights = new Array();
-	var skyRects = new Array();
-	var skyCylinder=new Array();
+    // LIGHT
 	
-	m=0
-	c=randomColor();//0x00FF00;//
-	x=0;
-	y=0;
-	z=0; 
-	
-	matArray=['images/pettah/1.jpg','images/pettah/2.jpg', 'images/pettah/3.jpg', 'images/pettah/4.jpg', 'images/pettah/5.jpg', 'images/pettah/6.jpg', 'images/pettah/7.jpg', 'images/pettah/8.jpg'];
-	
-	//matArray=['images/pettah/0.jpg','images/pettah/1.jpg','images/pettah/2.jpg', 'images/pettah/3.jpg', 'images/pettah/4.jpg', 'images/pettah/5.jpg', 'images/pettah/6.jpg', 'images/pettah/7.jpg', 'images/pettah/8.jpg'];
-	
-	
-	var materialArray = [];
-	for (var i = 0; i < 8; i++){
-		//if (i != 24){
-		//texture = new THREE.TextureLoader().load(  imagePrefix + directions[i] + imageSuffix );
-		materialArray.push( new THREE.MeshBasicMaterial({
-			map: new THREE.TextureLoader().load( matArray[i] ),
-			side: THREE.DoubleSide
-		}));
-		//}
-		materialArray[i].transparent=true;
-		materialArray[i].opacity=0.7;
-		materialArray[i].visible=false;
 	}
-	materialArray[0].visible=true;
-	//var cylmaterials=materialArray;
-	//materialArray[2].visible=false;
-	//materialArray[3].visible=false;
-	
-	//skyRects[m]=createRectCylinder(m,256,456,x,y,z,4,matArray);
-	//skyRects[m]=createOctaCylinder(m,256,456,x,y,z,8,materialArray);
-	m=m+1
-
-	hc=Math.floor(Math.random()* 32000)+30000;	 // random color for multi columns
-	skyCylinder[m]=createImgCylinder(m,hc,256,256,456, 8,2,x,y,z, materialArray);
-	scene.add( skyCylinder[m] )
-}
-
-function createImgCylinder(m, c, rt,rb,h,rs,hs,x,y,z, materialArray){	
-	var geometry = new THREE.CylinderGeometry( rt, rb, h,rs, hs );
-	//var material = new THREE.MeshBasicMaterial( {color: c, wireframe:true} );
-	//var cylinder = new THREE.Mesh( geometry, material );
-	var cylinder = new THREE.Mesh( geometry, materialArray);
-	cylinder.position.x=x;
-    cylinder.position.y=y;
-    cylinder.position.z=z;
-	return cylinder;
-}
-
 
 function ProjectionCamera(){
 //zero width object
@@ -269,14 +194,8 @@ var SCR_WIDTH = window.innerWidth-20;
 			//PointLight( color, intensity, distance, decay )
 			var light = new THREE.PointLight(0xffffff,1,500,5000);
 			light.position.set(camera.position);
-			scene.add(light);	
-}
-
-function wireframeOne(){
-	var skyCylinder=new Array();
-	hc=Math.floor(Math.random()* 32000)+30000;	 // random color for multi columns
-	skyCylinder[m]=createCylinder(m,hc,256,256,512, 8,2,x,y,z);
-	scene.add( skyCylinder[m] )
+			scene.add(light);
+			
 }
 
 function x(){
@@ -310,15 +229,8 @@ function x(){
 function createOctaCylinder(m,w,h,x,y,z,nfaces,matArray){
 	
 	var skyRects=[];
-	
 	c=2*Math.PI
     a=(c/nfaces);
-	r=c-(a * 0) ; //0
-	skyRects[0]=createRectangle(m,w,h,x,y,z-128,r,matArray[0]);
-	scene.add( skyRects[0] );
-	//skyRects[0].rotation.x = Math.PI /4;
-	
-	
 	r=c-(a * 1) ; //45
 	skyRects[1]=createRectangle(m,w,h,x+96,y,z-96,r,matArray[1])
 	scene.add( skyRects[1] );
@@ -355,7 +267,7 @@ function createOctaCylinder(m,w,h,x,y,z,nfaces,matArray){
 	scene.add( skyRects[8] );
 	skyRects[8].rotation.x = - (Math.PI/2);
 	skyRects[8].position.y = y1;
-	/*
+	
 	r=0;
 	y1=y+(h/2);
 	skyRects[9]=createRectangle(m,w,h,0,0,0,0,matArray[8]);
@@ -363,7 +275,7 @@ function createOctaCylinder(m,w,h,x,y,z,nfaces,matArray){
 	skyRects[9].rotation.x = - (Math.PI/2);
 	skyRects[9].position.y = y1;
 	skyRects[8].rotation.z = (Math.PI/2);
-	*/
+	
 	return skyRects;
 	
 }
@@ -405,7 +317,6 @@ function lightup(x,y,z,topscreen){
 	directionalLight.position.set(x,y,z);
 	return directionalLight;
 }
-
 function createRectangle(m,w,h,x1,y1,z1,r,imgx) {
 	console.log(w + " " + x1 + " " + y1 + " " +z1 + " " + r);
 	var rectTexture=new THREE.TextureLoader().load( imgx );
@@ -420,10 +331,11 @@ function createRectangle(m,w,h,x1,y1,z1,r,imgx) {
 	return rect;
 }
 
-function createCylinder(m, c, rt,rb,h,rs,hs,x,y,z){	
+function createCylinder(m, c, rt,rb,h,rs,hs,x,y,z, materialArray){	
 	var geometry = new THREE.CylinderGeometry( rt, rb, h,rs, hs );
 	var material = new THREE.MeshBasicMaterial( {color: c, wireframe:true} );
 	var cylinder = new THREE.Mesh( geometry, material );
+	//var cylinder = new THREE.Mesh( geometry, materialArray);
 	cylinder.position.x=x;
     cylinder.position.y=y;
     cylinder.position.z=z;
