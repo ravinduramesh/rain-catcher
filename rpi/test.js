@@ -2,22 +2,43 @@
 var fs = require('fs');
 
 var RaspiCam = require("raspicam");
-var Camera = new RaspiCam({mode: 'photo', output: 'temp.png', encoding: 'png', timeout: 500, 'nopreview': true});
 
 var syncData = function(){
-	setTimeout(function(){
-		//
-		Camera.start();
-		Camera.on("read", function(err, timestamp, filename){
-			fs.createReadStream('temp.png').pipe(fs.createWriteStream((new Date()).getTime() + '.png'));
-			console.log(filename);
-			setTimeout(syncData, 1000);
-			Camera.stop();
-		});
-		//
-	}, 500);
+	var TimeStamp = (new Date()).getTime();
+	var Camera = new RaspiCam({mode: 'photo', output: TimeStamp+'.png', encoding: 'png', timeout: 200});//, 'nopreview': true
+	Camera.start();
+	Camera.on("read", function(err, timestamp, filename){
+		setTimeout(function(){
+			syncData();
+		}, 8000);
+	});
 }
 syncData();
+
+
+function copyFile(source, target, cb){
+	var cbCalled = false;
+
+	var rd = fs.createReadStream(source);
+		rd.on("error", function(err) {
+		done(err);
+	});
+	var wr = fs.createWriteStream(target);
+		wr.on("error", function(err) {
+		done(err);
+	});
+	wr.on("close", function(ex) {
+		done();
+	});
+	rd.pipe(wr);
+
+	function done(err) {
+		if (!cbCalled) {
+			cb(err);
+			cbCalled = true;
+		}
+	}
+}
 
 
 /*/	Clean-up before program exits
