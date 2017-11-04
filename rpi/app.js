@@ -8,27 +8,24 @@ var RaspiCam = require("raspicam");
 
 var start = 800;
 var inc = 400;
-var pos = 3;
+var pos = 0;
 
 var TimeStamp;// = parseInt((new Date()).getTime() / 1000);
 var dataPacket = false;// = {};
 
 var step = function(){
-	pos += 1;
-	//
-	if (pos == 4){
-		pos = 0;
+	//	Read humidity file and start a new data packet
+	if (pos == 0){
 		TimeStamp = parseInt((new Date()).getTime() / 1000);
-		if (dataPacket != false)
-			upload_data(JSON.stringify(dataPacket));
 		dataPacket = JSON.parse(fs.readFileSync(__dirname+'/data.json')) || {};
 		dataPacket.timestamp = TimeStamp;
 		dataPacket.images = {};
 	}
+	//
 	Servo.servoWrite(start + inc*pos);
 	//console.log(start+' + ('+inc+' * '+pos+')');
 	//
-	//	Give time to servo to move
+	//	Give time for servo to move
 	setTimeout(function(){
 		var FileName = TimeStamp+'-'+pos+'.png';
 		// Take picture and add to buffer
@@ -37,7 +34,17 @@ var step = function(){
 				//console.log(image);
 				dataPacket.images[pos] = image;
 				// Move to next position
-				setTimeout(function(){step();}, 1000);
+				if (pos == 4){
+					pos = 0;
+					if (dataPacket != false)
+						upload_data(JSON.stringify(dataPacket));
+					//
+					setTimeout(function(){step();}, 30000);
+				}
+				else{
+					pos += 1;
+					setTimeout(function(){step();}, 1000);
+				}
 			});
 	}, 360);
 }
