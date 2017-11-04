@@ -74,8 +74,16 @@ app.post('/api/put', function (req, res){
 	//
 	handlePost(req, function(data){
 		//console.log(data);
-		for (var i = 0; i < 4; i++)
-			fs.writeFile('./static/images/'+data.id+'/'+i+'.png', Buffer.from(data.images[i], 'base64'), function(err){if (err) console.log(err);});
+		for (var i = 0; i < 4; i++){
+			//var img = Buffer.from(, 'base64');
+			fs.writeFile('./static/images/'+data.id+'/'+i+'.png',
+				'data:image/png;base64,'+data.images[i],
+				function(err){
+					if (err)
+						console.log(err);
+				}
+			);
+		}
 		//
 		//dataStore[data.id] = data;
 		dataStore = data;
