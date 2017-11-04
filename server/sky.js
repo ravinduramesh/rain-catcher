@@ -46,6 +46,15 @@ app.get('/', function (req, res){
 	res.send(loadTemplatePart('base.html', req));
 });
 
+app.get('/images/:id', function (req, res){
+	res.send(dataStore.images);
+});
+
+//	-----------------------------------------------------------------------------
+//	Deliver static assets
+//	-----------------------------------------------------------------------------
+app.use('/static/', express.static('static'));
+
 //	==================================================
 //		Below this point are URIs that are accesible from outside, in REST API calls
 //	==================================================
@@ -59,11 +68,18 @@ app.use(function(req, res, next){
 //	-----------------------------------------------------------------------------
 //	API Endpoint to receive data
 //	-----------------------------------------------------------------------------
+var dataStore = {};
 app.post('/api/put', function (req, res){
 	//	Needs to authenticate the RPi module
 	//
 	handlePost(req, function(data){
-		console.log(data);
+		//console.log(data);
+		for (var i = 0; i < 4; i++)
+			fs.writeFile('./static/images/'+data.id+'/'+i+'.png', Buffer.from(data.images[i], 'base64'), function(err){if (err) console.log(err);});
+		//
+		//dataStore[data.id] = data;
+		dataStore = data;
+		res.send('ok');
 	});
 });
 
@@ -80,7 +96,7 @@ function handlePost(req, callback){
 	var body = '';
 	req.on('data', function (data){
 		body += data;
-		if (body.length > 1e6)
+		if (body.length > 1e8)
 			req.connection.destroy();
 	});
 	req.on('end', function (data){

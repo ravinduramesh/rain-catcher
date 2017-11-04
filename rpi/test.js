@@ -1,7 +1,7 @@
 
 var fs = require('fs');
 
-var RaspiCam = require("raspicam");
+//var RaspiCam = require("raspicam");
 
 var syncData = function(){
 	var TimeStamp = (new Date()).getTime();
@@ -13,7 +13,7 @@ var syncData = function(){
 		}, 8000);
 	});
 }
-syncData();
+//syncData();
 
 
 function copyFile(source, target, cb){
@@ -39,6 +39,25 @@ function copyFile(source, target, cb){
 		}
 	}
 }
+
+var http = require('http');
+var upload_data = function(data){
+	var apiCall = http.request(
+		{port: 8088, method: 'POST', host: '192.168.43.226', path: '/api/put', headers: {'Content-Type': 'application/json'}},
+		function(response){
+			/*response.setEncoding('utf8');
+			handle_post(response, function(api_response){
+				console.log(api_response);
+			});*/
+		})
+	.on('error', function(err){
+		console.log(err);
+	});
+	//	Write data to request stream
+	apiCall.write(data);
+	apiCall.end();
+}
+upload_data('{test}');
 
 
 /*/	Clean-up before program exits

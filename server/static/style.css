@@ -1,0 +1,19 @@
+
+html{
+}
+
+body{
+	font-family:Roboto, sans-serif;
+}
+
+div.panorama{
+	white-space:nowrap;
+	margin-left:12%;
+}
+
+img.img{
+	 width:38.2%;
+	margin-left:-13.5%;
+	transform: rotate(180deg);
+	opacity:0.9;
+}
