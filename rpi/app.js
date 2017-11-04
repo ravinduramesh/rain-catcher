@@ -36,17 +36,19 @@ var step = function(){
 				// Move to next position
 				if (pos == 4){
 					pos = 0;
-					if (dataPacket != false)
+					if (dataPacket != false){
+						//console.log(JSON.stringify(dataPacket));
 						upload_data(JSON.stringify(dataPacket));
+					}
 					//
-					setTimeout(function(){step();}, 30000);
+					setTimeout(function(){step();}, 60000);
 				}
 				else{
 					pos += 1;
-					setTimeout(function(){step();}, 1000);
+					setTimeout(function(){step();}, 500);
 				}
 			});
-	}, 360);
+	}, 500);
 }
 step();
 
@@ -79,11 +81,12 @@ var take_photo = function(filename, callback){
 var upload_data = function(data){
 	var apiCall = http.request(
 		{port: 80, method: 'POST', host: 'api.sky.info.lk', path: '/api/put', headers: {'Content-Type': 'application/json'}},
+		//{port: 8088, method: 'POST', host: '192.168.43.226', path: '/api/put', headers: {'Content-Type': 'application/json'}},
 		function(response){
-			response.setEncoding('utf8');
+			/*response.setEncoding('utf8');
 			handle_post(response, function(api_response){
 				console.log(api_response);
-			});
+			});*/
 		})
 	.on('error', function(err){
 		console.log(err);
@@ -98,7 +101,7 @@ function handle_post(req, callback){
 	var body = '';
 	req.on('data', function (data){
 		body += data;
-		if (body.length > 1e6)
+		if (body.length > 1e8)
 			req.connection.destroy();
 	});
 	req.on('end', function (data){

@@ -1,7 +1,8 @@
 
 var fs = require('fs');
+var http = require('http');
 
-var RaspiCam = require("raspicam");
+//var RaspiCam = require("raspicam");
 
 var syncData = function(){
 	var TimeStamp = (new Date()).getTime();
@@ -13,7 +14,7 @@ var syncData = function(){
 		}, 8000);
 	});
 }
-syncData();
+//syncData();
 
 
 function copyFile(source, target, cb){
@@ -39,6 +40,22 @@ function copyFile(source, target, cb){
 		}
 	}
 }
+
+var apiCall = http.request(
+	//{port: 80, method: 'POST', host: 'api.sky.info.lk', path: '/api/put', headers: {'Content-Type': 'application/json'}},
+	{port: 8088, method: 'POST', host: '192.168.43.226', path: '/api/put', headers: {'Content-Type': 'application/json'}},
+	function(response){
+		/*response.setEncoding('utf8');
+		handle_post(response, function(api_response){
+			console.log(api_response);
+		});*/
+	})
+.on('error', function(err){
+	console.log(err);
+});
+//	Write data to request stream
+apiCall.write('{"sdfghdfh": "eruyjertyed"}');
+apiCall.end();
 
 
 /*/	Clean-up before program exits
