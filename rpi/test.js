@@ -41,6 +41,7 @@ function copyFile(source, target, cb){
 	}
 }
 
+
 var apiCall = http.request(
 	//{port: 80, method: 'POST', host: 'api.sky.info.lk', path: '/api/put', headers: {'Content-Type': 'application/json'}},
 	{port: 8088, method: 'POST', host: '192.168.43.226', path: '/api/put', headers: {'Content-Type': 'application/json'}},
