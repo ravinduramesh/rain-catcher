@@ -83,10 +83,11 @@ var upload_data = function(data){
 		{port: 80, method: 'POST', host: 'api.sky.info.lk', path: '/api/put', headers: {'Content-Type': 'application/json'}},
 		//{port: 8088, method: 'POST', host: '192.168.43.226', path: '/api/put', headers: {'Content-Type': 'application/json'}},
 		function(response){
-			/*response.setEncoding('utf8');
+			//console.log(response);
+			response.setEncoding('utf8');
 			handle_post(response, function(api_response){
 				console.log(api_response);
-			});*/
+			});
 		})
 	.on('error', function(err){
 		console.log(err);
