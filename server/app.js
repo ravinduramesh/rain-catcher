@@ -46,6 +46,16 @@ app.get('/', function (req, res){
 	res.send(loadTemplatePart('base.html', req));
 });
 
+//	==================================================
+//		Below this point are URIs that are accesible from outside, in REST API calls
+//	==================================================
+
+app.use(function(req, res, next){
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	next();
+});
+
 //	-----------------------------------------------------------------------------
 //	API Endpoint to receive data
 //	-----------------------------------------------------------------------------
